@@ -1,0 +1,82 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>daniel</groupId>
+	<artifactId>daniel</artifactId>
+	<version>0.0.1-SNAPSHOT</version>
+	<name>daniel</name>
+	<description>projeto daniel</description>
+
+	<dependencies>
+		<dependency>
+			<groupId>commons-io</groupId>
+			<artifactId>commons-io</artifactId>
+			<version>2.4</version>
+		</dependency>
+		<dependency>
+			<groupId>commons-lang</groupId>
+			<artifactId>commons-lang</artifactId>
+			<version>2.4</version>
+		</dependency>
+		<dependency>
+			<groupId>commons-collections</groupId>
+			<artifactId>commons-collections</artifactId>
+			<version>3.2.1</version>
+		</dependency>
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>4.11</version>
+		</dependency>
+	</dependencies>
+	
+	<build>
+<plugins>
+       <!-- DEFINE O PLUGIN MAVEN RESPONSÁVEL POR COMPILAR O PROJETO SUA VERSÃO E O JDK UTILIZADO  -->
+       <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-compiler-plugin</artifactId>
+            <version>2.3.2</version>
+            <configuration>
+                <source>1.6</source>
+                <target>1.6</target>
+            </configuration>
+        </plugin> 
+ 
+        <!-- DEFINE AS CONFIGURAÇÕES DO MAVEN ASSEMBLER  -->
+        <plugin>
+            <artifactId>maven-assembly-plugin</artifactId>
+            <configuration>
+                <archive>
+ 
+                   <!-- DEFINE QUAL É A CLASSE MAIN DA APLICAÇÃO  -->
+                    <manifest>
+                        <addClasspath>true</addClasspath>
+                        <mainClass>daniel.TxtMain</mainClass>
+                    </manifest>
+                </archive>
+ 
+                <!-- ADICIONO AO NOME DO JAR FINAL UM COMPLEMENTO DIZENDO
+                     QUE ELE CONTÉM AS DEPENDÊNCIAS  -->
+ 
+                <descriptorRefs>
+                    <descriptorRef>jar-with-dependencies</descriptorRef>
+                </descriptorRefs>
+            </configuration>
+            <executions>
+                <execution>
+ 
+                    <!-- DETERMINO QUE O JAR GERADO INCLUIRÁ AS DEPENDÊNCIAS E ELAS
+                    SERÃO EMPACOTADAS JUNTO COM O PROJETO EM UM ÚNICO JAR  -->
+ 
+                    <id>make-my-jar-with-dependencies</id>
+                    <phase>package</phase>
+                    <goals>
+                        <goal>single</goal>
+                    </goals>
+                </execution>
+            </executions>
+        </plugin>
+    </plugins>	
+	</build>
+</project>
