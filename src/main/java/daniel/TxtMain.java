@@ -5,7 +5,7 @@ import java.io.IOException;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -17,7 +17,7 @@ import org.apache.commons.lang.StringUtils;
 
 public class TxtMain {
 
-	private Map<String, List<Double>> map = new HashMap<String, List<Double>>();
+	private Map<String, List<Double>> map = new LinkedHashMap<String, List<Double>>();
 	
 	private File fileRoot;
 	

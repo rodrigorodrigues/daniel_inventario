@@ -53,6 +53,6 @@ public class TxtMainTest {
 		exception.expect(IllegalArgumentException.class);
 		exception.expectMessage("Campo path nao pode ser vazio");
 		
-		new TxtMain(null);
+		new TxtMain();
 	}
 }
