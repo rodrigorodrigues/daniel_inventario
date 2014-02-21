@@ -9,6 +9,8 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Properties;
+import java.util.Set;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.io.FileUtils;
@@ -22,6 +24,18 @@ public class TxtMain {
 	private File fileRoot;
 	
 	private String fileName;
+	
+	private Properties properties;
+	
+	{
+		try {
+			properties = new Properties();
+			properties.load(TxtMain.class.getResourceAsStream("/config.properties"));
+		} catch (Exception e) {
+			System.out.println("Arquivo(config.properties) nao encontrado na pasta raiz: "+e.getMessage());
+			System.exit(0);
+		}
+	}
 	
 	public static void main(String[] args) {
 		try {
@@ -99,6 +113,18 @@ public class TxtMain {
 		return new Date().getTime();
 	}
 	
+	private String[] getProdutosPeloConfig(String codigoBarras) {
+		Set<Entry<Object, Object>> entrySet = properties.entrySet();
+		String[] produtosPeloConfig = null;
+		for (Entry<Object, Object> entry : entrySet) {
+			if (StringUtils.equals(StringUtils.trim((String) entry.getKey()), StringUtils.trim(codigoBarras))) {
+				produtosPeloConfig = entry.getValue().toString().split(";");
+				break;
+			}
+		}
+		return produtosPeloConfig;
+	}
+	
 	private void montaTxtCustomizado(String ... paths) throws IOException {
 		File[] files = getFiles(paths);
 		for (File file : files) {
@@ -110,8 +136,15 @@ public class TxtMain {
 		} else {
 			StringBuilder sb = new StringBuilder();
 			for (Entry<String, List<Double>> entry : map.entrySet()) {
-				sb.append(entry.getKey());
-				String quantidadeProdutos = new DecimalFormat("#0.00").format(getQuantidadeProdutos(entry.getValue())).replaceFirst("\\.", ",");
+				String codigoBarras = entry.getKey();
+				String[] produtosPeloConfig = getProdutosPeloConfig(codigoBarras);
+				int multiplica = 1;
+				if (produtosPeloConfig != null) {
+					codigoBarras = produtosPeloConfig[0];
+					multiplica = Integer.parseInt(produtosPeloConfig[1]);
+				}
+				sb.append(codigoBarras);
+				String quantidadeProdutos = new DecimalFormat("#0.00").format(getQuantidadeProdutos(entry.getValue(), multiplica)).replaceFirst("\\.", ",");
 				sb.append(StringUtils.leftPad(quantidadeProdutos, 9, "0"));
 				sb.append(System.getProperty("line.separator"));
 			}
@@ -129,12 +162,12 @@ public class TxtMain {
 		}
 	}
 	
-	private Double getQuantidadeProdutos(List<Double> list) {
+	private Double getQuantidadeProdutos(List<Double> list, int multiplica) {
 		Double quantidade = new Double(0);
 		for (Double doubleValue : list) {
 			quantidade += doubleValue;
 		}
-		return quantidade;
+		return quantidade * multiplica;
 	}
 	
 	private void geraListaDeProdutos(File file) throws IOException {

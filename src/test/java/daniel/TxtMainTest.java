@@ -37,7 +37,7 @@ public class TxtMainTest {
 		TxtMain txtMain = new TxtMain(newFolder, "src/test/resources");
 		File newFile = new File(newFolder, txtMain.getFileName());
 		
-		assertThat(FileUtils.readFileToString(newFile), containsString("7622300359768000033,00"));
+		assertThat(FileUtils.readFileToString(newFile), containsString("7622300359768000055,00"));
 	}
 	
 	@Test
@@ -54,5 +54,25 @@ public class TxtMainTest {
 		exception.expectMessage("Campo path nao pode ser vazio");
 		
 		new TxtMain();
+	}
+
+	@Test
+	public void deveLerArquivoTxtComCaixaNaPastaRaizEGerarArquivoCustomizado() throws Exception {
+		File newFolder = folder.newFolder();
+
+		TxtMain txtMain = new TxtMain(newFolder, "src/test/resources/arqcon_com_caixa.TXT");
+		File newFile = new File(newFolder, txtMain.getFileName());
+		
+		assertThat(FileUtils.readFileToString(newFile), is(FileUtils.readFileToString(new File("src/test/resources/arquivo_customizado_correto_com_caixa"))));
+	}
+
+	@Test
+	public void deveLerArquivoTxtComCaixaDiferentesProdutosNaPastaRaizEGerarArquivoCustomizado() throws Exception {
+		File newFolder = folder.newFolder();
+
+		TxtMain txtMain = new TxtMain(newFolder, "src/test/resources/arqcon_com_caixa_diferentes_produtos.TXT");
+		File newFile = new File(newFolder, txtMain.getFileName());
+		
+		assertThat(FileUtils.readFileToString(newFile), is(FileUtils.readFileToString(new File("src/test/resources/arquivo_customizado_correto_com_caixa_diferentes_produtos"))));
 	}
 }
