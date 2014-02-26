@@ -1,6 +1,7 @@
 package daniel;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
@@ -30,7 +31,7 @@ public class TxtMain {
 	{
 		try {
 			properties = new Properties();
-			properties.load(TxtMain.class.getResourceAsStream("/config.properties"));
+			properties.load(new FileInputStream(new File("config.properties")));
 		} catch (Exception e) {
 			System.out.println("Arquivo(config.properties) nao encontrado na pasta raiz: "+e.getMessage());
 			System.exit(0);
@@ -137,14 +138,8 @@ public class TxtMain {
 			StringBuilder sb = new StringBuilder();
 			for (Entry<String, List<Double>> entry : map.entrySet()) {
 				String codigoBarras = entry.getKey();
-				String[] produtosPeloConfig = getProdutosPeloConfig(codigoBarras);
-				int multiplica = 1;
-				if (produtosPeloConfig != null) {
-					codigoBarras = produtosPeloConfig[0];
-					multiplica = Integer.parseInt(produtosPeloConfig[1]);
-				}
 				sb.append(codigoBarras);
-				String quantidadeProdutos = new DecimalFormat("#0.00").format(getQuantidadeProdutos(entry.getValue(), multiplica)).replaceFirst("\\.", ",");
+				String quantidadeProdutos = new DecimalFormat("#0.00").format(getQuantidadeProdutos(entry.getValue())).replaceFirst("\\.", ",");
 				sb.append(StringUtils.leftPad(quantidadeProdutos, 9, "0"));
 				sb.append(System.getProperty("line.separator"));
 			}
@@ -162,12 +157,12 @@ public class TxtMain {
 		}
 	}
 	
-	private Double getQuantidadeProdutos(List<Double> list, int multiplica) {
+	private Double getQuantidadeProdutos(List<Double> list) {
 		Double quantidade = new Double(0);
 		for (Double doubleValue : list) {
 			quantidade += doubleValue;
 		}
-		return quantidade * multiplica;
+		return quantidade;
 	}
 	
 	private void geraListaDeProdutos(File file) throws IOException {
@@ -176,8 +171,16 @@ public class TxtMain {
 			for (String string : lines) {
 				if (StringUtils.length(string) == 22) {
 					String keyCodigoBarras = StringUtils.rightPad(string.substring(0, 13), 13, "") ;
+					
+					String[] produtosPeloConfig = getProdutosPeloConfig(keyCodigoBarras);
+					int multiplica = 1;
+					if (produtosPeloConfig != null) {
+						keyCodigoBarras = produtosPeloConfig[0];
+						multiplica = Integer.parseInt(produtosPeloConfig[1]);
+					}
+					
 					String replaceString = string.replaceFirst("\\,", ".");
-					Double quantidade = new Double(replaceString.substring(13, replaceString.length()));
+					Double quantidade = new Double(replaceString.substring(13, replaceString.length())) * multiplica;
 					
 					List<Double> listQuantidade = map.get(keyCodigoBarras);
 					if (listQuantidade == null) {
